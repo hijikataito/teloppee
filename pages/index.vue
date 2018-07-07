@@ -1,21 +1,36 @@
-<template>
-  <section class="container">
-    <div>
-      <h1 class="title">
-        teloppee
-      </h1>
-      <svg xmlns="http://www.w3.org/2000/svg" ref="svg" id="screen" :viewBox="`0 0 ${width} ${height}`" :width="width" :height="height">
-        <text font-size="40" :x="x" :y="y">{{ message }}</text>
-      </svg>
-      <p>
-        Text:
-        <textarea v-model="message"></textarea>
-      </p>
-      Width: <input v-model.number="width" />
-      <br/> Height: <input v-model="height" />
-      <button @click="download">Download</button>
-    </div>
-  </section>
+<template lang="pug">
+  section.container
+    h1.title てろっぴ for VTuber
+       
+    .columns
+      .column
+        label.label プレビュー
+        svg(xmlns="http://www.w3.org/2000/svg" ref="svg" id="screen" :viewBox="`0 0 ${width} ${height}`" :width="width" :height="height")
+          text(:font-size="fontSize" :x="x" :y="y" v-html="messageXml" text-anchor="middle")
+      .column
+        .field
+          label.label テロップ
+          textarea.textarea(v-model="message")
+      
+          label.label フォントサイズ 
+          input.input(type="number" v-model.number="fontSize")
+
+          label.label 行の高さ
+          input.input(type="number" v-model.number="lineHeight")
+          
+          label.label 位置X（px）
+          input.input(type="number" v-model.number="x")
+          
+          label.label 位置Y（px）
+          input.input(type="number" v-model.number="y")
+          
+          label.label 画像横サイズ（px）
+          input.input(type="number" v-model.number="width")
+          
+          label.label 画像縦サイズ（px）
+          input.input(type="number" v-model.number="height")
+
+        button.button.is-primary.is-large(@click="download") PNGダウンロード
 </template>
 
 <script>
@@ -27,14 +42,31 @@ export default {
     return {
       width: 1280,
       height: 720,
+      fontSize: 50,
+      lineHeight: 60,
       x: 600,
       y: 300,
       message: "Test Telop"
     };
   },
+  computed: {
+    messageXml() {
+      const lines = this.message.split(/\r?\n/);
+      let currentX = this.x;
+      let currentY = 0;
+      let lineHeight = this.lineHeight;
+      let html = "";
+      lines.forEach(function(line) {
+        html += `<tspan x="${currentX}" y="${currentY}">${line}</tspan>`;
+        currentY += lineHeight;
+      });
+      return html;
+    }
+  },
   methods: {
     download() {
-      saveSvgAsPng(document.getElementById("screen"), "diagram.png");
+      const name = `${this.message}.png`;
+      saveSvgAsPng(document.getElementById("screen"), name);
     }
   },
   components: {}
@@ -44,36 +76,7 @@ export default {
 <style>
 #screen {
   border: 1px solid #ccc;
-  width: 50%;
-  height: 50%;
-}
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
+  width: 100%;
+  height: auto;
 }
 </style>
