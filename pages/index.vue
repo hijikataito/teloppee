@@ -1,38 +1,52 @@
 <template>
   <section class="container">
     <div>
-      <app-logo/>
       <h1 class="title">
         teloppee
       </h1>
-      <h2 class="subtitle">
-        Nuxt.js project
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green">Documentation</a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey">GitHub</a>
-      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" ref="svg" id="screen" :viewBox="`0 0 ${width} ${height}`" :width="width" :height="height">
+        <text font-size="40" :x="x" :y="y">{{ message }}</text>
+      </svg>
+      <p>
+        Text:
+        <textarea v-model="message"></textarea>
+      </p>
+      Width: <input v-model.number="width" />
+      <br/> Height: <input v-model="height" />
+      <button @click="download">Download</button>
     </div>
   </section>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
+// import AppLogo from "~/components/AppLogo.vue";
+import { saveSvgAsPng } from "save-svg-as-png";
 
 export default {
-  components: {
-    AppLogo
-  }
-}
+  data() {
+    return {
+      width: 1280,
+      height: 720,
+      x: 600,
+      y: 300,
+      message: "Test Telop"
+    };
+  },
+  methods: {
+    download() {
+      saveSvgAsPng(document.getElementById("screen"), "diagram.png");
+    }
+  },
+  components: {}
+};
 </script>
 
 <style>
+#screen {
+  border: 1px solid #ccc;
+  width: 50%;
+  height: 50%;
+}
 .container {
   min-height: 100vh;
   display: flex;
@@ -42,7 +56,8 @@ export default {
 }
 
 .title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
+  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
   display: block;
   font-weight: 300;
   font-size: 100px;
